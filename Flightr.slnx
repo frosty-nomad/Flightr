@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="Flightr.Api/Flightr.Api.csproj" />
+  <Project Path="Flightr.Data/Flightr.Data.csproj" />
+  <Project Path="Flightr.Web/Flightr.Web.csproj" />
+</Solution>

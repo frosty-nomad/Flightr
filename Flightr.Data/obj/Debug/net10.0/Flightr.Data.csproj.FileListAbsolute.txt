@@ -1,0 +1,12 @@
+/workspaces/codespaces-blank/Flightr.Data/bin/Debug/net10.0/Flightr.Data.deps.json
+/workspaces/codespaces-blank/Flightr.Data/bin/Debug/net10.0/Flightr.Data.dll
+/workspaces/codespaces-blank/Flightr.Data/bin/Debug/net10.0/Flightr.Data.pdb
+/workspaces/codespaces-blank/Flightr.Data/obj/Debug/net10.0/Flightr.Data.csproj.AssemblyReference.cache
+/workspaces/codespaces-blank/Flightr.Data/obj/Debug/net10.0/Flightr.Data.GeneratedMSBuildEditorConfig.editorconfig
+/workspaces/codespaces-blank/Flightr.Data/obj/Debug/net10.0/Flightr.Data.AssemblyInfoInputs.cache
+/workspaces/codespaces-blank/Flightr.Data/obj/Debug/net10.0/Flightr.Data.AssemblyInfo.cs
+/workspaces/codespaces-blank/Flightr.Data/obj/Debug/net10.0/Flightr.Data.csproj.CoreCompileInputs.cache
+/workspaces/codespaces-blank/Flightr.Data/obj/Debug/net10.0/Flightr.Data.dll
+/workspaces/codespaces-blank/Flightr.Data/obj/Debug/net10.0/refint/Flightr.Data.dll
+/workspaces/codespaces-blank/Flightr.Data/obj/Debug/net10.0/Flightr.Data.pdb
+/workspaces/codespaces-blank/Flightr.Data/obj/Debug/net10.0/ref/Flightr.Data.dll

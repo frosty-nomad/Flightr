@@ -1,0 +1,24 @@
+@page "{id:int}"
+@model Flightr.Web.Pages.FlightLogs.DeleteModel
+@{
+    ViewData["Title"] = "Delete Flight Log";
+}
+
+<h1 class="h3 mb-3">Delete Flight Log</h1>
+
+@if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+{
+    <div class="alert alert-danger">@Model.ErrorMessage</div>
+}
+else
+{
+    <div class="alert alert-warning">
+        Are you sure you want to delete the flight log for
+        <strong>@Model.Summary</strong>?
+    </div>
+
+    <form method="post">
+        <button type="submit" class="btn btn-danger">Delete</button>
+        <a asp-page="/FlightLogs/Index" class="btn btn-outline-secondary">Cancel</a>
+    </form>
+}

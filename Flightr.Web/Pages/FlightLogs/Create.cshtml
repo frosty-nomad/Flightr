@@ -1,0 +1,97 @@
+@page
+@model Flightr.Web.Pages.FlightLogs.CreateModel
+@{
+    ViewData["Title"] = "New Flight Log";
+}
+
+<h1 class="h3 mb-3">New Flight Log</h1>
+
+<form method="post" class="card card-body shadow-sm">
+    <div class="row g-3">
+        <div class="col-md-4">
+            <label asp-for="Input.FlightDate" class="form-label"></label>
+            <input asp-for="Input.FlightDate" class="form-control" type="date" />
+            <span asp-validation-for="Input.FlightDate" class="text-danger"></span>
+        </div>
+        <div class="col-md-4">
+            <label asp-for="Input.AircraftType" class="form-label"></label>
+            <input asp-for="Input.AircraftType" class="form-control" />
+            <span asp-validation-for="Input.AircraftType" class="text-danger"></span>
+        </div>
+        <div class="col-md-4">
+            <label asp-for="Input.TailNumber" class="form-label"></label>
+            <input asp-for="Input.TailNumber" class="form-control" />
+        </div>
+
+        <div class="col-md-4">
+            <label asp-for="Input.DepartureAirport" class="form-label"></label>
+            <input asp-for="Input.DepartureAirport" class="form-control" />
+        </div>
+        <div class="col-md-4">
+            <label asp-for="Input.ArrivalAirport" class="form-label"></label>
+            <input asp-for="Input.ArrivalAirport" class="form-control" />
+        </div>
+        <div class="col-md-4">
+            <label asp-for="Input.Route" class="form-label"></label>
+            <input asp-for="Input.Route" class="form-control" />
+        </div>
+
+        <div class="col-md-3">
+            <label asp-for="Input.TotalHours" class="form-label"></label>
+            <input asp-for="Input.TotalHours" class="form-control" type="number" step="0.1" min="0" />
+        </div>
+        <div class="col-md-3">
+            <label asp-for="Input.PicHours" class="form-label"></label>
+            <input asp-for="Input.PicHours" class="form-control" type="number" step="0.1" min="0" />
+        </div>
+        <div class="col-md-3">
+            <label asp-for="Input.SicHours" class="form-label"></label>
+            <input asp-for="Input.SicHours" class="form-control" type="number" step="0.1" min="0" />
+        </div>
+        <div class="col-md-3">
+            <label asp-for="Input.CrossCountryHours" class="form-label"></label>
+            <input asp-for="Input.CrossCountryHours" class="form-control" type="number" step="0.1" min="0" />
+        </div>
+        <div class="col-md-3">
+            <label asp-for="Input.NightHours" class="form-label"></label>
+            <input asp-for="Input.NightHours" class="form-control" type="number" step="0.1" min="0" />
+        </div>
+        <div class="col-md-3">
+            <label asp-for="Input.InstrumentHours" class="form-label"></label>
+            <input asp-for="Input.InstrumentHours" class="form-control" type="number" step="0.1" min="0" />
+        </div>
+
+        <div class="col-md-3">
+            <label asp-for="Input.TakeoffsDay" class="form-label"></label>
+            <input asp-for="Input.TakeoffsDay" class="form-control" type="number" min="0" />
+        </div>
+        <div class="col-md-3">
+            <label asp-for="Input.TakeoffsNight" class="form-label"></label>
+            <input asp-for="Input.TakeoffsNight" class="form-control" type="number" min="0" />
+        </div>
+        <div class="col-md-3">
+            <label asp-for="Input.LandingsDay" class="form-label"></label>
+            <input asp-for="Input.LandingsDay" class="form-control" type="number" min="0" />
+        </div>
+        <div class="col-md-3">
+            <label asp-for="Input.LandingsNight" class="form-label"></label>
+            <input asp-for="Input.LandingsNight" class="form-control" type="number" min="0" />
+        </div>
+
+
+        <div class="col-12">
+            <label asp-for="Input.Remarks" class="form-label"></label>
+            <textarea asp-for="Input.Remarks" class="form-control" rows="3"></textarea>
+        </div>
+    </div>
+
+    <div class="text-danger mt-3" asp-validation-summary="ModelOnly"></div>
+    <div class="mt-3 d-flex gap-2">
+        <button type="submit" class="btn btn-primary">Save log</button>
+        <a asp-page="/FlightLogs/Index" class="btn btn-outline-secondary">Cancel</a>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
