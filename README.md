@@ -12,4 +12,4 @@ For private and commercial pilots who want a clear, trustworthy record of their 
 - Secure login/logout with persistent sessions.
 - Flight log entry creation, editing, and deletion with FAA minimum required fields.
 - Protected "My Flight Logs" view with summary table.
-- CSV download endpoint for flight logs.
+- Flight Log API download and CRUD operations endpoints.
