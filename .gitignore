@@ -2,7 +2,15 @@
 [Bb]in/
 [Oo]bj/
 [Dd]ebug/
+[Dd]ebugPublic/
 [Rr]elease/
+[Rr]eleases/
+bld/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
 
 # .NET user-specific files
 *.user
@@ -10,21 +18,28 @@
 *.suo
 *.userosscache
 *.sln.docstates
+*.DotSettings.user
+*.sln.iml
 
-# Visual Studio / VS Code
+# Visual Studio / VS Code / Rider / ReSharper
 .vs/
 .vscode/
-
-# Rider / ReSharper
+*.code-workspace
 .idea/
 _ReSharper*/
-*.DotSettings.user
+*.swp
+*.swo
+*~
 
 # NuGet
 *.nupkg
 *.snupkg
 packages/
 !**/packages/build/
+*.nuget.props
+*.nuget.targets
+.nuget/ServiceIndex.json
+packages.lock.json
 
 # Test results and coverage
 [Tt]est[Rr]esult*/
@@ -34,18 +49,35 @@ packages/
 *.coveragexml
 coverage/
 
-# Logs
+# Logs and temporary files
+[Ll]og/
+[Ll]ogs/
 *.log
+*.tmp
+*.bak
 
 # Publish output
 publish/
 
-# ASP.NET Core local settings and certificates
+# Local environment files
+.env
+.env.local
+.env.*.local
+
+# ASP.NET Core local settings
 appsettings.Local.json
 appsettings.*.local.json
 
 # Generated static web assets cache
 **/obj/**/staticwebassets.development.json
+
+# .NET SDK local folder
+.dotnet/
+
+# Database artifacts
+*.db
+*.db-shm
+*.db-wal
 
 # OS files
 .DS_Store
