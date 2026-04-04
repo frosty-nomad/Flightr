@@ -1,5 +1,6 @@
 using System.Net.Http.Json;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Flightr.Web.Pages.FlightLogs;
@@ -29,6 +30,32 @@ public class IndexModel : PageModel
         {
             ErrorMessage = "Unable to load flight logs: " + ex.Message;
         }
+    }
+
+    public async Task<IActionResult> OnPostDeleteAsync(int id)
+    {
+        var response = await _client.DeleteAsync($"api/flight-logs/{id}");
+        if (response.IsSuccessStatusCode)
+        {
+            return RedirectToPage();
+        }
+
+        try
+        {
+            var results = await _client.GetFromJsonAsync<List<FlightLogDto>>("api/flight-logs");
+            Logs = results ?? new List<FlightLogDto>();
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = "Unable to load flight logs: " + ex.Message;
+        }
+
+        var errorBody = await response.Content.ReadAsStringAsync();
+        ErrorMessage = string.IsNullOrWhiteSpace(errorBody)
+            ? "Unable to delete the flight log."
+            : "Unable to delete the flight log: " + errorBody;
+
+        return Page();
     }
 
     public class FlightLogDto

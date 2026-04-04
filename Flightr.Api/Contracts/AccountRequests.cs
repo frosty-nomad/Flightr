@@ -10,3 +10,16 @@ public record RegisterAccountRequest(
     [Required] string LicenseNumber,
     DateOnly? LicenseExpirationDate,
     [Required] string LicenseGoal);
+
+public record LoginRequest(
+    [Required] string Email,
+    [Required] string Password);
+
+public record LoginResponse(
+    string AccessToken,
+    string PilotName,
+    string Email);
+
+public record LoginErrorResponse(
+    string ErrorCode,
+    string Message);

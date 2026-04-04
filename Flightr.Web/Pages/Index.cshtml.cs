@@ -5,8 +5,13 @@ namespace Flightr.Web.Pages;
 
 public class IndexModel : PageModel
 {
-    public void OnGet()
+    public IActionResult OnGet()
     {
+        if (!(User.Identity?.IsAuthenticated ?? false))
+        {
+            return RedirectToPage("/Account/Login");
+        }
 
+        return Page();
     }
 }

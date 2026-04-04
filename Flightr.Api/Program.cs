@@ -1,6 +1,9 @@
 using Flightr.Data;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,10 +35,27 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<FlightrDbContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
-builder.Services.AddAuthorization();
+var jwtKey = builder.Configuration["Jwt:Key"]
+    ?? throw new InvalidOperationException("JWT key is missing from configuration.");
 
-builder.Services.AddIdentityApiEndpoints<ApplicationUser>()
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = false,
+            ValidateAudience = false,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
+            ClockSkew = TimeSpan.FromMinutes(2)
+        };
+    });
+
+builder.Services.AddIdentityCore<ApplicationUser>()
     .AddEntityFrameworkStores<FlightrDbContext>();
+
+builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
@@ -51,7 +71,6 @@ app.UseCors("ExternalApi");
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapIdentityApi<ApplicationUser>();
 app.MapControllers();
 
 app.Run();

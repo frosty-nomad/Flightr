@@ -22,6 +22,8 @@ public class EditModel : PageModel
     [BindProperty]
     public InputModel Input { get; set; } = new();
 
+    public List<string> AircraftTypes { get; private set; } = new();
+
     public class InputModel
     {
         [Required]
@@ -32,17 +34,21 @@ public class EditModel : PageModel
         [MaxLength(32)]
         public string AircraftType { get; set; } = string.Empty;
 
+        [Required]
         [MaxLength(16)]
-        public string? TailNumber { get; set; }
+        public string TailNumber { get; set; } = string.Empty;
 
+        [Required]
         [MaxLength(8)]
-        public string? DepartureAirport { get; set; }
+        public string DepartureAirport { get; set; } = string.Empty;
 
+        [Required]
         [MaxLength(8)]
-        public string? ArrivalAirport { get; set; }
+        public string ArrivalAirport { get; set; } = string.Empty;
 
+        [Required]
         [MaxLength(128)]
-        public string? Route { get; set; }
+        public string Route { get; set; } = string.Empty;
 
         [Range(0, 999)]
         public decimal TotalHours { get; set; }
@@ -81,6 +87,8 @@ public class EditModel : PageModel
 
     public async Task<IActionResult> OnGetAsync()
     {
+        await LoadAircraftTypesAsync();
+
         var log = await _client.GetFromJsonAsync<FlightLogDetailDto>($"api/flight-logs/{Id}");
         if (log is null)
         {
@@ -91,10 +99,10 @@ public class EditModel : PageModel
         {
             FlightDate = log.FlightDate,
             AircraftType = log.AircraftType,
-            TailNumber = log.TailNumber,
-            DepartureAirport = log.DepartureAirport,
-            ArrivalAirport = log.ArrivalAirport,
-            Route = log.Route,
+            TailNumber = log.TailNumber ?? string.Empty,
+            DepartureAirport = log.DepartureAirport ?? string.Empty,
+            ArrivalAirport = log.ArrivalAirport ?? string.Empty,
+            Route = log.Route ?? string.Empty,
             TotalHours = log.TotalHours,
             PicHours = log.PicHours,
             SicHours = log.SicHours,
@@ -108,15 +116,42 @@ public class EditModel : PageModel
             Remarks = log.Remarks
         };
 
+        if (!AircraftTypes.Contains(Input.AircraftType, StringComparer.OrdinalIgnoreCase))
+        {
+            AircraftTypes.Add(Input.AircraftType);
+            AircraftTypes = AircraftTypes
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .OrderBy(type => type)
+                .ToList();
+        }
+
         return Page();
     }
 
     public async Task<IActionResult> OnPostAsync()
     {
+        await LoadAircraftTypesAsync();
+
+        if (!string.IsNullOrWhiteSpace(Input.AircraftType)
+            && !AircraftTypes.Contains(Input.AircraftType, StringComparer.OrdinalIgnoreCase))
+        {
+            AircraftTypes.Add(Input.AircraftType);
+            AircraftTypes = AircraftTypes
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .OrderBy(type => type)
+                .ToList();
+        }
+
         if (!ModelState.IsValid)
         {
             return Page();
         }
+
+        Input.TotalHours = Input.PicHours
+            + Input.SicHours
+            + Input.CrossCountryHours
+            + Input.NightHours
+            + Input.InstrumentHours;
 
         var response = await _client.PutAsJsonAsync($"api/flight-logs/{Id}", new
         {
@@ -151,6 +186,19 @@ public class EditModel : PageModel
         ModelState.AddModelError(string.Empty, message);
 
         return Page();
+    }
+
+    private async Task LoadAircraftTypesAsync()
+    {
+        try
+        {
+            var types = await _client.GetFromJsonAsync<List<string>>("api/flight-logs/aircraft-types");
+            AircraftTypes = types ?? new List<string>();
+        }
+        catch
+        {
+            AircraftTypes = new List<string>();
+        }
     }
 
     private class FlightLogDetailDto

@@ -20,6 +20,8 @@ public class CreateModel : PageModel
     [BindProperty]
     public InputModel Input { get; set; } = new();
 
+    public List<string> AircraftTypes { get; private set; } = new();
+
     public class InputModel
     {
         [Required]
@@ -30,17 +32,21 @@ public class CreateModel : PageModel
         [MaxLength(32)]
         public string AircraftType { get; set; } = string.Empty;
 
+        [Required]
         [MaxLength(16)]
-        public string? TailNumber { get; set; }
+        public string TailNumber { get; set; } = string.Empty;
 
+        [Required]
         [MaxLength(8)]
-        public string? DepartureAirport { get; set; }
+        public string DepartureAirport { get; set; } = string.Empty;
 
+        [Required]
         [MaxLength(8)]
-        public string? ArrivalAirport { get; set; }
+        public string ArrivalAirport { get; set; } = string.Empty;
 
+        [Required]
         [MaxLength(128)]
-        public string? Route { get; set; }
+        public string Route { get; set; } = string.Empty;
 
         [Range(0, 999)]
         public decimal TotalHours { get; set; }
@@ -77,16 +83,25 @@ public class CreateModel : PageModel
         public string? Remarks { get; set; }
     }
 
-    public void OnGet()
+    public async Task OnGetAsync()
     {
+        await LoadAircraftTypesAsync();
     }
 
     public async Task<IActionResult> OnPostAsync()
     {
+        await LoadAircraftTypesAsync();
+
         if (!ModelState.IsValid)
         {
             return Page();
         }
+
+        Input.TotalHours = Input.PicHours
+            + Input.SicHours
+            + Input.CrossCountryHours
+            + Input.NightHours
+            + Input.InstrumentHours;
 
         var pilotId = User.FindFirstValue(ClaimTypes.Email) ?? User.Identity?.Name;
         if (string.IsNullOrWhiteSpace(pilotId))
@@ -129,5 +144,18 @@ public class CreateModel : PageModel
         ModelState.AddModelError(string.Empty, message);
 
         return Page();
+    }
+
+    private async Task LoadAircraftTypesAsync()
+    {
+        try
+        {
+            var types = await _client.GetFromJsonAsync<List<string>>("api/flight-logs/aircraft-types");
+            AircraftTypes = types ?? new List<string>();
+        }
+        catch
+        {
+            AircraftTypes = new List<string>();
+        }
     }
 }

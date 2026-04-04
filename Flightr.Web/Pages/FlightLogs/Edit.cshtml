@@ -15,67 +15,91 @@
         </div>
         <div class="col-md-4">
             <label asp-for="Input.AircraftType" class="form-label"></label>
-            <input asp-for="Input.AircraftType" class="form-control" />
+            <input asp-for="Input.AircraftType" class="form-control" list="aircraft-types" autocomplete="off" placeholder="Start typing to search" />
+            <datalist id="aircraft-types">
+                @foreach (var aircraftType in Model.AircraftTypes)
+                {
+                    <option value="@aircraftType"></option>
+                }
+            </datalist>
             <span asp-validation-for="Input.AircraftType" class="text-danger"></span>
         </div>
         <div class="col-md-4">
             <label asp-for="Input.TailNumber" class="form-label"></label>
             <input asp-for="Input.TailNumber" class="form-control" />
+            <span asp-validation-for="Input.TailNumber" class="text-danger"></span>
         </div>
 
         <div class="col-md-4">
             <label asp-for="Input.DepartureAirport" class="form-label"></label>
             <input asp-for="Input.DepartureAirport" class="form-control" />
+            <span asp-validation-for="Input.DepartureAirport" class="text-danger"></span>
         </div>
         <div class="col-md-4">
             <label asp-for="Input.ArrivalAirport" class="form-label"></label>
             <input asp-for="Input.ArrivalAirport" class="form-control" />
+            <span asp-validation-for="Input.ArrivalAirport" class="text-danger"></span>
         </div>
         <div class="col-md-4">
             <label asp-for="Input.Route" class="form-label"></label>
             <input asp-for="Input.Route" class="form-control" />
+            <span asp-validation-for="Input.Route" class="text-danger"></span>
         </div>
 
-        <div class="col-md-3">
-            <label asp-for="Input.TotalHours" class="form-label"></label>
-            <input asp-for="Input.TotalHours" class="form-control" type="number" step="0.1" min="0" />
-        </div>
-        <div class="col-md-3">
-            <label asp-for="Input.PicHours" class="form-label"></label>
-            <input asp-for="Input.PicHours" class="form-control" type="number" step="0.1" min="0" />
-        </div>
-        <div class="col-md-3">
-            <label asp-for="Input.SicHours" class="form-label"></label>
-            <input asp-for="Input.SicHours" class="form-control" type="number" step="0.1" min="0" />
-        </div>
-        <div class="col-md-3">
-            <label asp-for="Input.CrossCountryHours" class="form-label"></label>
-            <input asp-for="Input.CrossCountryHours" class="form-control" type="number" step="0.1" min="0" />
-        </div>
-        <div class="col-md-3">
-            <label asp-for="Input.NightHours" class="form-label"></label>
-            <input asp-for="Input.NightHours" class="form-control" type="number" step="0.1" min="0" />
-        </div>
-        <div class="col-md-3">
-            <label asp-for="Input.InstrumentHours" class="form-label"></label>
-            <input asp-for="Input.InstrumentHours" class="form-control" type="number" step="0.1" min="0" />
+        <div class="col-12">
+            <div class="row g-3">
+                <div class="col-6 col-md-4 col-lg-2">
+                    <label asp-for="Input.PicHours" class="form-label"></label>
+                    <input asp-for="Input.PicHours" class="form-control" type="number" step="0.01" min="0" asp-format="{0:0.00}" />
+                    <span asp-validation-for="Input.PicHours" class="text-danger"></span>
+                </div>
+                <div class="col-6 col-md-4 col-lg-2">
+                    <label asp-for="Input.SicHours" class="form-label"></label>
+                    <input asp-for="Input.SicHours" class="form-control" type="number" step="0.01" min="0" asp-format="{0:0.00}" />
+                    <span asp-validation-for="Input.SicHours" class="text-danger"></span>
+                </div>
+                <div class="col-6 col-md-4 col-lg-2">
+                    <label asp-for="Input.CrossCountryHours" class="form-label"></label>
+                    <input asp-for="Input.CrossCountryHours" class="form-control" type="number" step="0.01" min="0" asp-format="{0:0.00}" />
+                    <span asp-validation-for="Input.CrossCountryHours" class="text-danger"></span>
+                </div>
+                <div class="col-6 col-md-4 col-lg-2">
+                    <label asp-for="Input.NightHours" class="form-label"></label>
+                    <input asp-for="Input.NightHours" class="form-control" type="number" step="0.01" min="0" asp-format="{0:0.00}" />
+                    <span asp-validation-for="Input.NightHours" class="text-danger"></span>
+                </div>
+                <div class="col-6 col-md-4 col-lg-2">
+                    <label asp-for="Input.InstrumentHours" class="form-label"></label>
+                    <input asp-for="Input.InstrumentHours" class="form-control" type="number" step="0.01" min="0" asp-format="{0:0.00}" />
+                    <span asp-validation-for="Input.InstrumentHours" class="text-danger"></span>
+                </div>
+                <div class="col-6 col-md-4 col-lg-2">
+                    <label asp-for="Input.TotalHours" class="form-label"></label>
+                    <input asp-for="Input.TotalHours" class="form-control" type="number" step="0.01" min="0" readonly asp-format="{0:0.00}" />
+                    <span asp-validation-for="Input.TotalHours" class="text-danger"></span>
+                </div>
+            </div>
         </div>
 
         <div class="col-md-3">
             <label asp-for="Input.TakeoffsDay" class="form-label"></label>
             <input asp-for="Input.TakeoffsDay" class="form-control" type="number" min="0" />
+            <span asp-validation-for="Input.TakeoffsDay" class="text-danger"></span>
         </div>
         <div class="col-md-3">
             <label asp-for="Input.TakeoffsNight" class="form-label"></label>
             <input asp-for="Input.TakeoffsNight" class="form-control" type="number" min="0" />
+            <span asp-validation-for="Input.TakeoffsNight" class="text-danger"></span>
         </div>
         <div class="col-md-3">
             <label asp-for="Input.LandingsDay" class="form-label"></label>
             <input asp-for="Input.LandingsDay" class="form-control" type="number" min="0" />
+            <span asp-validation-for="Input.LandingsDay" class="text-danger"></span>
         </div>
         <div class="col-md-3">
             <label asp-for="Input.LandingsNight" class="form-label"></label>
             <input asp-for="Input.LandingsNight" class="form-control" type="number" min="0" />
+            <span asp-validation-for="Input.LandingsNight" class="text-danger"></span>
         </div>
 
 
@@ -94,4 +118,36 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const totalInput = document.getElementById("Input_TotalHours");
+            const hourInputs = [
+                "Input_PicHours",
+                "Input_SicHours",
+                "Input_CrossCountryHours",
+                "Input_NightHours",
+                "Input_InstrumentHours"
+            ]
+                .map(id => document.getElementById(id))
+                .filter(input => input);
+
+            const recalculateTotalHours = () => {
+                const total = hourInputs.reduce((sum, input) => {
+                    const value = parseFloat(input.value);
+                    return sum + (Number.isNaN(value) ? 0 : value);
+                }, 0);
+
+                if (totalInput) {
+                    totalInput.value = total.toFixed(2);
+                }
+            };
+
+            hourInputs.forEach(input => {
+                input.addEventListener("input", recalculateTotalHours);
+                input.addEventListener("change", recalculateTotalHours);
+            });
+
+            recalculateTotalHours();
+        });
+    </script>
 }

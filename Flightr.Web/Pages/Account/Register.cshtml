@@ -5,8 +5,29 @@
 }
 
 <div class="row justify-content-center">
-    <div class="col-md-6 col-lg-4">
+    <div class="col-md-8 col-lg-6">
         <h1 class="h3 mb-3">Create account</h1>
+
+        @if (!string.IsNullOrEmpty(Model.RegistrationErrorMessage) || Model.RegistrationErrors.Count > 0)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <h5 class="alert-heading">Registration failed</h5>
+                @if (!string.IsNullOrEmpty(Model.RegistrationErrorMessage))
+                {
+                    <p class="mb-0">@Model.RegistrationErrorMessage</p>
+                }
+                @if (Model.RegistrationErrors.Count > 0)
+                {
+                    <ul class="mb-0 mt-2">
+                        @foreach (var error in Model.RegistrationErrors)
+                        {
+                            <li>@error</li>
+                        }
+                    </ul>
+                }
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
 
         <form method="post" class="card card-body shadow-sm">
             <div class="mb-3">
@@ -43,6 +64,14 @@
                 <label asp-for="Input.Password" class="form-label"></label>
                 <input asp-for="Input.Password" class="form-control" />
                 <span asp-validation-for="Input.Password" class="text-danger"></span>
+                <div class="form-text mt-2">
+                    <strong>Password requirements:</strong>
+                    <ul class="mb-0 mt-1">
+                        <li>At least 8 characters long</li>
+                        <li>Should include uppercase and lowercase letters</li>
+                        <li>Should include numbers and special characters for better security</li>
+                    </ul>
+                </div>
             </div>
             <div class="mb-3">
                 <label asp-for="Input.ConfirmPassword" class="form-label"></label>

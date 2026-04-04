@@ -6,12 +6,35 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddHttpClient("Api", client =>
+
+// Configure HttpClient for API with certificate validation bypass in development
+if (builder.Environment.IsDevelopment())
 {
-    var baseUrl = builder.Configuration["ApiSettings:BaseUrl"]
-        ?? "https://localhost:5001/";
-    client.BaseAddress = new Uri(baseUrl);
-}).AddHttpMessageHandler<ApiAuthHandler>();
+    builder.Services.AddHttpClient("Api", client =>
+    {
+        var baseUrl = builder.Configuration["ApiSettings:BaseUrl"]
+            ?? "https://localhost:5001/";
+        client.BaseAddress = new Uri(baseUrl);
+    })
+    .AddHttpMessageHandler<ApiAuthHandler>()
+    .ConfigurePrimaryHttpMessageHandler(() =>
+    {
+        var handler = new HttpClientHandler();
+        handler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true;
+        return handler;
+    });
+}
+else
+{
+    builder.Services.AddHttpClient("Api", client =>
+    {
+        var baseUrl = builder.Configuration["ApiSettings:BaseUrl"]
+            ?? "https://localhost:5001/";
+        client.BaseAddress = new Uri(baseUrl);
+    })
+    .AddHttpMessageHandler<ApiAuthHandler>();
+}
+
 builder.Services.AddTransient<ApiAuthHandler>();
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>

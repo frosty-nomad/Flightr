@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.Net.Http.Json;
+using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -16,6 +17,9 @@ public class RegisterModel : PageModel
 
     [BindProperty]
     public InputModel Input { get; set; } = new();
+
+    public string? RegistrationErrorMessage { get; set; }
+    public List<string> RegistrationErrors { get; set; } = new();
 
     public class InputModel
     {
@@ -72,16 +76,50 @@ public class RegisterModel : PageModel
 
         if (response.IsSuccessStatusCode)
         {
-            TempData["StatusMessage"] = "Account created. You can sign in now.";
+            TempData["RegistrationStatusMessage"] = "Account created. You can sign in now.";
             return RedirectToPage("/Account/Login");
         }
 
+        // Parse error response to extract validation errors
         var errorBody = await response.Content.ReadAsStringAsync();
-        var message = string.IsNullOrWhiteSpace(errorBody)
-            ? "Registration failed. Please review the details and try again."
-            : "Registration failed: " + errorBody;
+        try
+        {
+            using var document = JsonDocument.Parse(errorBody);
+            var root = document.RootElement;
 
-        ModelState.AddModelError(string.Empty, message);
+            // Handle validation problem format
+            if (root.TryGetProperty("errors", out var errorsElement))
+            {
+                foreach (var error in errorsElement.EnumerateObject())
+                {
+                    if (error.Value.ValueKind == JsonValueKind.Array)
+                    {
+                        foreach (var msg in error.Value.EnumerateArray())
+                        {
+                            RegistrationErrors.Add(msg.GetString() ?? "Unknown error");
+                        }
+                    }
+                }
+            }
+
+            // Handle single error message
+            if (root.TryGetProperty("detail", out var detailElement))
+            {
+                RegistrationErrorMessage = detailElement.GetString();
+            }
+        }
+        catch (JsonException)
+        {
+            // If JSON parsing fails, use raw response
+            RegistrationErrorMessage = errorBody;
+        }
+
+        if (RegistrationErrors.Count == 0 && string.IsNullOrWhiteSpace(RegistrationErrorMessage))
+        {
+            RegistrationErrorMessage = "Registration failed. Please review the details and try again.";
+        }
+
+        ModelState.AddModelError(string.Empty, RegistrationErrorMessage ?? "Registration failed.");
         return Page();
     }
 }

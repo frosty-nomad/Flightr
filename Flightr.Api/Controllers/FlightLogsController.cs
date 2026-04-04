@@ -19,6 +19,18 @@ public class FlightLogsController : ControllerBase
         _dbContext = dbContext;
     }
 
+    [HttpGet("aircraft-types")]
+    public async Task<ActionResult<IReadOnlyList<string>>> GetAircraftTypes(CancellationToken cancellationToken)
+    {
+        var types = await _dbContext.AircraftTypes
+            .AsNoTracking()
+            .OrderBy(type => type.Name)
+            .Select(type => type.Name)
+            .ToListAsync(cancellationToken);
+
+        return Ok(types);
+    }
+
     [HttpGet]
     public async Task<ActionResult<IReadOnlyList<FlightLog>>> GetAll(CancellationToken cancellationToken)
     {
