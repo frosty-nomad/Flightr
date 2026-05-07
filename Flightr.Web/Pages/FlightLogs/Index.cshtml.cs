@@ -58,6 +58,27 @@ public class IndexModel : PageModel
         return Page();
     }
 
+    public async Task<IActionResult> OnGetDownloadAsync()
+    {
+        try
+        {
+            var response = await _client.GetAsync("api/flight-logs/download");
+            if (!response.IsSuccessStatusCode)
+            {
+                return NotFound();
+            }
+
+            var csvContent = await response.Content.ReadAsStreamAsync();
+            var fileName = $"flight-log-{DateTime.Now:yyyy-MM-dd-HH-mm}.csv";
+            return File(csvContent, "text/csv", fileName);
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = "Unable to download flight logs: " + ex.Message;
+            return Page();
+        }
+    }
+
     public class FlightLogDto
     {
         public int Id { get; set; }

@@ -13,7 +13,7 @@ if (builder.Environment.IsDevelopment())
     builder.Services.AddHttpClient("Api", client =>
     {
         var baseUrl = builder.Configuration["ApiSettings:BaseUrl"]
-            ?? "https://localhost:5001/";
+            ?? "http://localhost:5001/";
         client.BaseAddress = new Uri(baseUrl);
     })
     .AddHttpMessageHandler<ApiAuthHandler>()
@@ -29,7 +29,7 @@ else
     builder.Services.AddHttpClient("Api", client =>
     {
         var baseUrl = builder.Configuration["ApiSettings:BaseUrl"]
-            ?? "https://localhost:5001/";
+            ?? "http://localhost:5001/";
         client.BaseAddress = new Uri(baseUrl);
     })
     .AddHttpMessageHandler<ApiAuthHandler>();

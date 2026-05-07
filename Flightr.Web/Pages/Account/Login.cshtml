@@ -34,6 +34,9 @@
             </div>
             <div class="text-danger" asp-validation-summary="ModelOnly"></div>
             <button type="submit" class="btn btn-primary w-100">Sign in</button>
+            <div class="text-center mt-3">
+                <a asp-page="/Account/ForgotPassword" class="link-secondary">Forgot Password?</a>
+            </div>
         </form>
 
         @if (!string.IsNullOrEmpty(Model.AccountNotFoundMessage))

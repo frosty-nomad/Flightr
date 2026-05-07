@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Net.Http.Json;
 using System.Security.Claims;
+using System.Text;
 using System.Text.Json;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -67,6 +68,42 @@ public class LoginModel : PageModel
             if (!string.IsNullOrWhiteSpace(accessToken))
             {
                 claims.Add(new Claim("access_token", accessToken));
+                
+                // Extract user ID from JWT token payload
+                try
+                {
+                    var parts = accessToken.Split('.');
+                    if (parts.Length == 3)
+                    {
+                        // Decode the payload (second part)
+                        var payload = parts[1];
+                        // Add padding if needed
+                        var padding = payload.Length % 4;
+                        if (padding > 0)
+                        {
+                            payload += new string('=', 4 - padding);
+                        }
+                        
+                        var decodedBytes = Convert.FromBase64String(payload);
+                        var decodedString = Encoding.UTF8.GetString(decodedBytes);
+                        
+                        using var document = JsonDocument.Parse(decodedString);
+                        var root = document.RootElement;
+                        
+                        if (root.TryGetProperty("sub", out var subElement))
+                        {
+                            var userId = subElement.GetString();
+                            if (!string.IsNullOrWhiteSpace(userId))
+                            {
+                                claims.Add(new Claim(ClaimTypes.NameIdentifier, userId));
+                            }
+                        }
+                    }
+                }
+                catch
+                {
+                    // If JWT decoding fails, continue without the NameIdentifier claim
+                }
             }
 
             var identity = new ClaimsIdentity(

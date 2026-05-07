@@ -6,7 +6,10 @@
 
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h1 class="h3">My Flight Logs</h1>
-    <a class="btn btn-primary" asp-page="/FlightLogs/Create">New log</a>
+    <div class="d-flex gap-2">
+        <a class="btn btn-outline-secondary" href="javascript:void(0);" onclick="downloadFlightLog()">Download Flight Log</a>
+        <a class="btn btn-primary" asp-page="/FlightLogs/Create">New log</a>
+    </div>
 </div>
 
 @if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
@@ -96,6 +99,33 @@ else
 
 @section Scripts {
     <script>
+        function downloadFlightLog() {
+            fetch("?handler=Download")
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Failed to download flight log");
+                    }
+                    return response.blob();
+                })
+                .then(blob => {
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement("a");
+                    a.href = url;
+                        const now = new Date();
+                        const dateStr = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
+                        const timeStr = String(now.getHours()).padStart(2, '0') + '-' + String(now.getMinutes()).padStart(2, '0');
+                        a.download = `flight-log-${dateStr}-${timeStr}.csv`;
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                })
+                .catch(error => {
+                    console.error("Download error:", error);
+                    alert("Failed to download flight log. Please try again.");
+                });
+        }
+
         document.addEventListener("DOMContentLoaded", () => {
             const modal = document.getElementById("deleteLogModal");
             if (!modal) {

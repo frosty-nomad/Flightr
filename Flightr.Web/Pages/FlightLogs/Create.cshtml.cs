@@ -103,7 +103,7 @@ public class CreateModel : PageModel
             + Input.NightHours
             + Input.InstrumentHours;
 
-        var pilotId = User.FindFirstValue(ClaimTypes.Email) ?? User.Identity?.Name;
+        var pilotId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (string.IsNullOrWhiteSpace(pilotId))
         {
             ModelState.AddModelError(string.Empty, "Unable to resolve the pilot identifier. Please log in again.");

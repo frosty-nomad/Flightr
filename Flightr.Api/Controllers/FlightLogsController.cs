@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using System.Text;
 using Flightr.Api.Contracts;
 using Flightr.Data;
@@ -34,8 +35,15 @@ public class FlightLogsController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IReadOnlyList<FlightLog>>> GetAll(CancellationToken cancellationToken)
     {
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (string.IsNullOrEmpty(userId))
+        {
+            return Unauthorized();
+        }
+
         var logs = await _dbContext.FlightLogs
             .AsNoTracking()
+            .Where(log => log.PilotId == userId)
             .OrderByDescending(log => log.FlightDate)
             .ToListAsync(cancellationToken);
 
@@ -43,22 +51,22 @@ public class FlightLogsController : ControllerBase
     }
 
     [HttpGet("download")]
-    public async Task<IActionResult> Download([FromQuery] string? pilotId, CancellationToken cancellationToken)
+    public async Task<IActionResult> Download(CancellationToken cancellationToken)
     {
-        var query = _dbContext.FlightLogs.AsNoTracking();
-        if (!string.IsNullOrWhiteSpace(pilotId))
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (string.IsNullOrEmpty(userId))
         {
-            query = query.Where(log => log.PilotId == pilotId);
+            return Unauthorized();
         }
 
-        var logs = await query
+        var logs = await _dbContext.FlightLogs
+            .AsNoTracking()
+            .Where(log => log.PilotId == userId)
             .OrderBy(log => log.FlightDate)
             .ToListAsync(cancellationToken);
 
         var csv = BuildCsv(logs);
-        var fileName = string.IsNullOrWhiteSpace(pilotId)
-            ? "flight-logs.csv"
-            : $"flight-logs-{pilotId}.csv";
+        var fileName = $"flight-logs-{DateTime.UtcNow:yyyy-MM-dd}.csv";
 
         return File(Encoding.UTF8.GetBytes(csv), "text/csv", fileName);
     }
@@ -66,9 +74,15 @@ public class FlightLogsController : ControllerBase
     [HttpGet("{id:int}")]
     public async Task<ActionResult<FlightLog>> GetById(int id, CancellationToken cancellationToken)
     {
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (string.IsNullOrEmpty(userId))
+        {
+            return Unauthorized();
+        }
+
         var log = await _dbContext.FlightLogs
             .AsNoTracking()
-            .FirstOrDefaultAsync(entry => entry.Id == id, cancellationToken);
+            .FirstOrDefaultAsync(entry => entry.Id == id && entry.PilotId == userId, cancellationToken);
 
         return log is null ? NotFound() : Ok(log);
     }
@@ -142,8 +156,14 @@ public class FlightLogsController : ControllerBase
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
     {
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (string.IsNullOrEmpty(userId))
+        {
+            return Unauthorized();
+        }
+
         var log = await _dbContext.FlightLogs
-            .FirstOrDefaultAsync(entry => entry.Id == id, cancellationToken);
+            .FirstOrDefaultAsync(entry => entry.Id == id && entry.PilotId == userId, cancellationToken);
 
         if (log is null)
         {
