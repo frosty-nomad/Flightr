@@ -64,10 +64,13 @@ public class FlightLogsControllerTests
 
         var result = await controller.GetAll(default);
 
-        result.Result.Should().BeNull();
-        result.Value.Should().NotBeNull();
-        result.Value.Should().HaveCount(1);
-        result.Value![0].PilotId.Should().Be("user-a");
+        result.Result.Should().BeOfType<OkObjectResult>();
+        result.Value.Should().BeNull();
+
+        var ok = (OkObjectResult)result.Result!;
+        var logs = ok.Value.Should().BeAssignableTo<IEnumerable<FlightLog>>().Subject.ToList();
+        logs.Should().HaveCount(1);
+        logs[0].PilotId.Should().Be("user-a");
     }
 
     [Fact]
@@ -129,8 +132,10 @@ public class FlightLogsControllerTests
 
         var result = await controller.GetById(6, default);
 
-        result.Result.Should().BeNull();
-        result.Value.Should().NotBeNull();
-        result.Value!.Id.Should().Be(6);
+        result.Result.Should().BeOfType<OkObjectResult>();
+        result.Value.Should().BeNull();
+
+        var ok = (OkObjectResult)result.Result!;
+        ok.Value.Should().BeAssignableTo<FlightLog>().Which.Id.Should().Be(6);
     }
 }
