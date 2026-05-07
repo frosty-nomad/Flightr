@@ -1,0 +1,17 @@
+flowchart LR
+  Browser["User Browser"]
+  Web["Flightr.Web<br/>(Razor Pages)"]
+  API["Flightr.Api<br/>(REST API, Identity)"]
+  DB["MySQL<br/>(Flightr database via EF Core)"]
+
+  Browser -->|View pages / click UI| Web
+  Web -->|Server-rendered pages / AJAX| API
+  Browser -->|Login/Register POST| API
+  API -->|Issues JWT on successful login| Browser
+  Browser -->|Sends Bearer token on API calls| API
+  API -->|Reads/writes data via EF Core| DB
+
+  style Browser fill:#f9f,stroke:#333,stroke-width:1px
+  style Web fill:#bbf,stroke:#333,stroke-width:1px
+  style API fill:#bfb,stroke:#333,stroke-width:1px
+  style DB fill:#ffd,stroke:#333,stroke-width:1px
