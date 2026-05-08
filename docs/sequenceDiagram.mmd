@@ -1,0 +1,28 @@
+sequenceDiagram
+    actor User
+    participant Web as Flightr.Web
+    participant API as Flightr.Api
+    participant Auth as ASP.NET Core Identity/JWT
+    participant DB as MySQL via EF Core
+
+    User->>Web: Open login page and submit email/password
+    Web->>API: POST /api/account/login
+    API->>Auth: Validate credentials
+    Auth-->>API: Return user claims and JWT
+    API-->>Web: LoginResponse with access token
+    Web->>Web: Create auth cookie and store token claim
+    Web-->>User: Redirect to /FlightLogs/Index
+
+    Note over Web,API: ApiAuthHandler forwards the JWT as a Bearer token on API calls.
+
+    User->>Web: Open Create Flight Log page
+    Web->>API: GET /api/flight-logs/aircraft-types
+    API->>DB: Read seeded aircraft types
+    DB-->>API: Aircraft type list
+    API-->>Web: Aircraft type list
+    User->>Web: Submit new flight log
+    Web->>API: POST /api/flight-logs
+    API->>DB: Save flight log entry
+    DB-->>API: Stored row
+    API-->>Web: 201 Created
+    Web-->>User: Redirect to /FlightLogs/Index
