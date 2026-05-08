@@ -75,6 +75,60 @@ sequenceDiagram
 	Web-->>User: Redirect to /FlightLogs/Index
 ```
 
+## UML Class Diagram
+
+```mermaid
+classDiagram
+	class IdentityUser
+	class IdentityDbContext~ApplicationUser~
+
+	class ApplicationUser{
+		+string PilotName
+		+string LicenseNumber
+		+DateOnly? LicenseExpirationDate
+		+string LicenseGoal
+	}
+
+	class FlightrDbContext{
+		+DbSet~FlightLog~ FlightLogs
+		+DbSet~AircraftType~ AircraftTypes
+		+OnModelCreating(ModelBuilder modelBuilder)
+	}
+
+	class FlightLog{
+		+int Id
+		+string PilotId
+		+DateTime FlightDate
+		+string AircraftType
+		+string? TailNumber
+		+string? DepartureAirport
+		+string? ArrivalAirport
+		+string? Route
+		+decimal TotalHours
+		+decimal PicHours
+		+decimal SicHours
+		+decimal CrossCountryHours
+		+decimal NightHours
+		+decimal InstrumentHours
+		+int TakeoffsDay
+		+int TakeoffsNight
+		+int LandingsDay
+		+int LandingsNight
+		+string? Remarks
+		+DateTime CreatedAtUtc
+	}
+
+	class AircraftType{
+		+int Id
+		+string Name
+	}
+
+	IdentityUser <|-- ApplicationUser
+	IdentityDbContext~ApplicationUser~ <|-- FlightrDbContext
+	FlightrDbContext --> FlightLog : FlightLogs
+	FlightrDbContext --> AircraftType : AircraftTypes
+```
+
 ## MC/DC Test Map
 
 The frontend test project is organized around the main decision points in the page models:
